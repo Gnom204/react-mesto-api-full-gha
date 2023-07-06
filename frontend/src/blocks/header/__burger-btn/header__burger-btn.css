@@ -1,0 +1,12 @@
+.header__burger-btn {
+    visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    background-color: transparent;
+}
+
+/* @media screen and (max-width:696px) {
+    .header__burger-btn {
+        visibility: visible;
+    }
+} */
