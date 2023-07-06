@@ -9,8 +9,8 @@
 
 ## Ссылки на проект
 
-IP-адрес x.x.x.x
+IP-адрес 130.193.38.190
 
-Frontend https://...
+Frontend https://github.com/Gnom204/react-mesto-auth
 
-Backend https://...
+Backend https://github.com/Gnom204/express-mesto-gha
