@@ -10,7 +10,7 @@ const {
 const getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => {
-      res.status(goodRequest.status).send({ data: cards });
+      res.status(goodRequest.status).send(cards);
     })
     .catch(next);
 };
@@ -20,7 +20,7 @@ const createCards = (req, res, next) => {
 
   Card.create({ name, link, owner: req.user._id })
     .then((card) => {
-      res.status(createRequest.status).send({ data: card });
+      res.status(createRequest.status).send(card);
     })
     .catch(next);
 };

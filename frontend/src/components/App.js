@@ -28,10 +28,24 @@ function App() {
   const [loggedIn, setIsLoggedIn] = React.useState(false)
   const [cards, setCards] = React.useState([]);
   const [userEmail, setUserEmail] = React.useState('');
+  const cookies = document.cookie
+  useEffect(() => {
+    if (loggedIn) {
+      Promise.all([api.loadingCard(), api.loadingUserInfo()]).then((cards, user) => {
+        console.log({
+          cards: cards[0].data,
+          user,
+        })
+        setCards(cards[0].data);
+        setCurrentUser(user)
+      })
+    }
+  }, [])
 
   useEffect(() => {
     api.loadingCard()
       .then((res) => {
+        console.log(res)
         setCards(res)
       })
       .catch(error => console.log(error))
@@ -47,6 +61,13 @@ function App() {
       })
   },
     [])
+  useEffect(() => {
+    if (loggedIn === true) {
+      navigate('/')
+    } else {
+      navigate('/sign-in')
+    }
+  }, [loggedIn, navigate])
 
   //Проверка токена
   useEffect(() => {
@@ -104,9 +125,10 @@ function App() {
     const isLiked = card.likes.some(id => id === currentUser._id);
     // Отправляем запрос в API и получаем обновлённые данные карточки
     api.changeLikeCardStatus(card._id, isLiked).then((newCard) => {
+      console.log(isLiked)
       setCards((state) => {
-        console.log(state.data)
-        // state.data.map((c) => c._id === card._id ? newCard : c)
+        console.log(state)
+        state.map((c) => c._id === card._id ? newCard : c)
       });
 
     })
@@ -116,9 +138,7 @@ function App() {
   function handleCardDelete(card) {
     api.deleteCard(card._id)
       .then(() => {
-        setCards((state) => state.filter((c) => {
-          return c.data._id !== card._id
-        }))
+        setCards((state) => state.filter((c) => c._id !== card._id))
       })
       .catch(error => console.log(error))
   }
@@ -136,7 +156,7 @@ function App() {
     api.addCardOnServer(name, link)
       .then((newCard) => {
         console.log(cards, newCard)
-        setCards([...cards, { newCard }]);
+        setCards([...cards, newCard]);
         closeAllPopups()
       })
       .catch(error => console.log(error))
@@ -158,9 +178,11 @@ function App() {
   const onLogin = (email, password) => {
     auth.authorize(email, password)
       .then((data) => {
+        console.log(data)
         localStorage.setItem('token', data.token)
         setIsLoggedIn(true);
         navigate('/', { replace: true })
+        setCurrentUser(data.data);
         //Устанавливаем email для дальнейшего использования в профиле
         setUserEmail(email)
       })
@@ -175,14 +197,6 @@ function App() {
     setUserEmail(null)
     localStorage.removeItem("token")
   }
-
-  useEffect(() => {
-    if (loggedIn === true) {
-      navigate('/')
-    }
-  }, [loggedIn, navigate])
-
-
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
