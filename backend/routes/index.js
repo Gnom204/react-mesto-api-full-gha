@@ -6,7 +6,11 @@ const auth = require('../middlewares/auth');
 const { signUpValidation, sigInValidation } = require('../utils/validations');
 
 const router = express.Router();
-
+router.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
 router.post('/signin', sigInValidation, login);
 router.post('/signup', signUpValidation, createUsers);
 
