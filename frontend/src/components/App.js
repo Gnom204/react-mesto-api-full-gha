@@ -29,17 +29,15 @@ function App() {
   const [cards, setCards] = React.useState([]);
   const [userEmail, setUserEmail] = React.useState('');
   useEffect(() => {
-    if (loggedIn) {
-      Promise.all([api.loadingCard(), api.loadingUserInfo()]).then((cards, user) => {
-        console.log({
-          cards: cards[0].data,
-          user,
-        })
-        setCards(cards[0].data);
-        setCurrentUser(user)
+    Promise.all([api.loadingCard(), api.loadingUserInfo()]).then((cards, user) => {
+      console.log({
+        cards: cards[0].data,
+        user,
       })
-    }
-  }, [loggedIn])
+      setCards(cards[0].data);
+      setCurrentUser(user)
+    })
+  }, [])
 
   useEffect(() => {
     api.loadingCard()
@@ -175,7 +173,6 @@ function App() {
   const onLogin = (email, password) => {
     auth.authorize(email, password)
       .then((data) => {
-        console.log(data)
         localStorage.setItem('token', data.token)
         setIsLoggedIn(true);
         navigate('/', { replace: true })

@@ -1,5 +1,5 @@
 export const BASE_URL = 'https://api.gnomdomen.nomoredomains.work';
-
+// 'https://api.gnomdomen.nomoredomains.work'
 export const register = (email, password) => {
     return fetch(`${BASE_URL}/signup`, {
         credentials: "include",

@@ -97,7 +97,7 @@ export class Api {
         return Promise.reject(`Ошибка: ${res.status}`);
     }
 }
-
+// 'https://api.gnomdomen.nomoredomains.work'
 const api = new Api({
     baseUrl: 'https://api.gnomdomen.nomoredomains.work',
     headers: {
