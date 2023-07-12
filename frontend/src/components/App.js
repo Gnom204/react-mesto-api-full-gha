@@ -28,7 +28,6 @@ function App() {
   const [loggedIn, setIsLoggedIn] = React.useState(false)
   const [cards, setCards] = React.useState([]);
   const [userEmail, setUserEmail] = React.useState('');
-  const cookies = document.cookie
   useEffect(() => {
     if (loggedIn) {
       Promise.all([api.loadingCard(), api.loadingUserInfo()]).then((cards, user) => {
@@ -40,7 +39,7 @@ function App() {
         setCurrentUser(user)
       })
     }
-  }, [])
+  }, [loggedIn])
 
   useEffect(() => {
     api.loadingCard()
@@ -64,8 +63,6 @@ function App() {
   useEffect(() => {
     if (loggedIn === true) {
       navigate('/')
-    } else {
-      navigate('/sign-in')
     }
   }, [loggedIn, navigate])
 
