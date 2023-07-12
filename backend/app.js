@@ -12,7 +12,7 @@ const errorHandler = require('./middlewares/error');
 const { notFound } = require('./utils/constants');
 const NotFoundError = require('./errors/not-found-err');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-const { allowedCors } = require('./middlewares/corsProtect');
+// const { allowedCors } = require('./middlewares/corsProtect');
 
 const { PORT = 8000 } = process.env;
 
@@ -24,7 +24,6 @@ app.use(cookieParser());
 app.use(requestLogger);
 app.use(cors({
   credentials: true,
-  origin: allowedCors,
 }));
 app.use(router);
 app.use(errorLogger);
