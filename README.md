@@ -11,6 +11,6 @@
 
 IP-адрес 130.193.38.190
 
-Frontend https://github.com/Gnom204/react-mesto-auth
+Frontend https://gnomdomen.nomoreparties.sbs/
 
-Backend https://github.com/Gnom204/express-mesto-gha
+Backend http://api.gnomdomen.nomoredomains.work/
