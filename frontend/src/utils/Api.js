@@ -99,7 +99,7 @@ export class Api {
 }
 
 const api = new Api({
-    baseUrl: 'http://api.gnomdomen.nomoredomains.work',
+    baseUrl: 'https://api.gnomdomen.nomoredomains.work',
     headers: {
         authorization: 'cf1f2fd8-5312-427b-b17f-83a02fd1127b',
         'Content-Type': 'application/json'
