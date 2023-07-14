@@ -6,15 +6,15 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const NotFoundError = require('../errors/not-found-err');
 const {
-  serverError,
-  createRequest,
+  serverError: HTTP_STATUS_SERVER_ERROR,
+  createRequest: HTTP_STATUS_CREATE_REQUEST,
   notFound,
-  goodRequest,
-  secretKey,
+  goodRequest: HTTP_STATUS_GOOD_REQUEST,
 } = require('../utils/constants'); // Статусы и сообщения об ошибке
 const ServerError = require('../errors/server-error');
 const UnauthorizedError = require('../errors/unauthorized-error');
 const ConflictError = require('../errors/conflict-error');
+const { JWT_SECRET } = require('../config');
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
@@ -25,15 +25,14 @@ const login = (req, res, next) => {
       bcrypt.compare(password, user.password)
         .then((matched) => {
           if (matched) {
-            const token = jwt.sign({ _id: user._id }, secretKey, { expiresIn: '7d' });
+            const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
             res.cookie('jwt', token, {
-              maxAge: 30000,
+              maxAge: 3000000,
               httpOnly: true,
-              secure: true,
-              sameSite: 'none',
+              // secure: true,
+              // sameSite: 'none',
             }).send({
               data: user.toJSON(),
-              token,
             });
           } else {
             throw new UnauthorizedError('Неправильные email или пароль');
@@ -48,7 +47,7 @@ const getUserInfo = (req, res, next) => {
   const userId = req.user._id;
   User.findById(userId)
     .then((user) => {
-      res.status(goodRequest.status).send(user);
+      res.status(HTTP_STATUS_GOOD_REQUEST.status).send(user);
     })
     .catch(next);
 };
@@ -56,7 +55,7 @@ const getUserInfo = (req, res, next) => {
 const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
-      res.status(goodRequest.status).send({ data: users });
+      res.status(HTTP_STATUS_GOOD_REQUEST.status).send({ data: users });
     })
     .catch(next);
 };
@@ -68,7 +67,7 @@ const getUserById = (req, res, next) => {
       if (!user) {
         throw new NotFoundError(notFound.message);
       } else {
-        res.status(goodRequest.status).send(user);
+        res.status(HTTP_STATUS_GOOD_REQUEST.status).send(user);
       }
     })
     .catch(next);
@@ -93,13 +92,13 @@ const createUsers = (req, res, next) => {
         password: hash,
       })
         .then((user) => {
-          res.status(createRequest.status).send({ data: user.toJSON() });
+          res.status(HTTP_STATUS_CREATE_REQUEST.status).send({ data: user.toJSON() });
         })
         .catch((err) => {
           if (err.code === 11000) {
             next(new ConflictError('Пользователь уже существует'));
           } else {
-            next(new ServerError(serverError.message));
+            next(new ServerError(HTTP_STATUS_SERVER_ERROR.message));
           }
         });
     })
@@ -119,7 +118,7 @@ const updateProfile = (req, res, next) => {
       if (!user) {
         throw new NotFoundError(notFound.message);
       } else {
-        res.status(goodRequest.status).send(user);
+        res.status(HTTP_STATUS_GOOD_REQUEST.status).send(user);
       }
     })
     .catch(next);
@@ -135,7 +134,7 @@ const updateAvatar = (req, res, next) => {
       if (!user) {
         throw new NotFoundError(notFound.message);
       } else {
-        res.status(goodRequest.status).send(user);
+        res.status(HTTP_STATUS_GOOD_REQUEST.status).send(user);
       }
     })
     .catch(next);

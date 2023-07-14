@@ -28,26 +28,25 @@ function App() {
   const [loggedIn, setIsLoggedIn] = React.useState(false)
   const [cards, setCards] = React.useState([]);
   const [userEmail, setUserEmail] = React.useState('');
+
   useEffect(() => {
-    Promise.all([api.loadingCard(), api.loadingUserInfo()]).then((cards, user) => {
-      console.log({
-        cards: cards[0].data,
-        user,
-      })
-      setCards(cards[0].data);
-      setCurrentUser(user)
-    })
+    const logged = localStorage.getItem('loginStatus');
+    if (logged) {
+      setIsLoggedIn(true)
+    }
   }, [])
 
   useEffect(() => {
-    api.loadingCard()
-      .then((res) => {
-        console.log(res)
-        setCards(res)
-      })
-      .catch(error => console.log(error))
+    if (loggedIn) {
+      api.loadingCard()
+        .then((res) => {
+          console.log(res)
+          setCards(res)
+        })
+        .catch(error => console.log(error))
+    }
   },
-    [])
+    [loggedIn])
 
   useEffect(() => {
     api.loadingUserInfo()
@@ -63,25 +62,6 @@ function App() {
       navigate('/')
     }
   }, [loggedIn, navigate])
-
-  //Проверка токена
-  useEffect(() => {
-    if (localStorage.getItem("token")) {
-      const token = localStorage.getItem("token");
-      auth.checkToken(token)
-        .then((res) => {
-          console.log(res)
-          setUserEmail(res.email)
-          if (res) {
-            setIsLoggedIn(true);
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-        })
-    }
-  },
-    [])
 
   function handleUpdateUser(name, about) {
     api.refreshProfileData(name, about)
@@ -173,7 +153,7 @@ function App() {
   const onLogin = (email, password) => {
     auth.authorize(email, password)
       .then((data) => {
-        localStorage.setItem('token', data.token)
+        localStorage.setItem('loginStatus', true)
         setIsLoggedIn(true);
         navigate('/', { replace: true })
         setCurrentUser(data.data);
@@ -189,7 +169,7 @@ function App() {
   const signOut = () => {
     setIsLoggedIn(false)
     setUserEmail(null)
-    localStorage.removeItem("token")
+    localStorage.removeItem('loginStatus')
   }
 
   return (

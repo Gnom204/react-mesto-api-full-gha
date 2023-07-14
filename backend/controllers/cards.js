@@ -2,15 +2,15 @@ const ForbiddenError = require('../errors/forbidden-error');
 const NotFoundError = require('../errors/not-found-err');
 const Card = require('../models/card');
 const {
-  createRequest,
-  notFound,
-  goodRequest,
+  HTTP_STATUS_CREATE_REQUEST,
+  HTTP_STATUS_NOT_FOUND,
+  HTTP_STATUS_GOOD_REQUEST,
 } = require('../utils/constants'); // Статусы и сообщения об ошибке
 
 const getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => {
-      res.status(goodRequest.status).send(cards);
+      res.status(HTTP_STATUS_GOOD_REQUEST.status).send(cards);
     })
     .catch(next);
 };
@@ -20,7 +20,7 @@ const createCards = (req, res, next) => {
 
   Card.create({ name, link, owner: req.user._id })
     .then((card) => {
-      res.status(createRequest.status).send(card);
+      res.status(HTTP_STATUS_CREATE_REQUEST.status).send(card);
     })
     .catch(next);
 };
@@ -31,13 +31,14 @@ const deleteCard = (req, res, next) => {
   Card.findById(cardId)
     .then((card) => {
       if (!card) {
-        throw new NotFoundError(notFound.message);
+        throw new NotFoundError(HTTP_STATUS_NOT_FOUND.message);
       } else if (card.owner.toString() !== userId) {
         throw new ForbiddenError('У вас нет прав для удаления карточки');
       } else {
         return Card.findByIdAndRemove(cardId)
           .then(() => {
-            res.status(goodRequest.status).send({ message: goodRequest.message });
+            res.status(HTTP_STATUS_GOOD_REQUEST.status)
+              .send({ message: HTTP_STATUS_GOOD_REQUEST.message });
           });
       }
     })
@@ -52,7 +53,7 @@ const likeCard = (req, res, next) => {
   )
     .then((card) => {
       if (!card) {
-        throw new NotFoundError(notFound.message);
+        throw new NotFoundError(HTTP_STATUS_NOT_FOUND.message);
       } else {
         res.status(200).send(card.likes);
       }
@@ -68,7 +69,7 @@ const dislikeCard = (req, res, next) => {
   )
     .then((card) => {
       if (!card) {
-        throw new NotFoundError(notFound.message);
+        throw new NotFoundError(HTTP_STATUS_NOT_FOUND.message);
       } else {
         res.status(200).send(card.likes);
       }

@@ -1,12 +1,12 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 const { celebrate, Joi } = require('celebrate');
-const { regex } = require('./constants');
+const { regexForImageUrl } = require('./constants');
 
 const signUpValidation = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().pattern(regex),
+    avatar: Joi.string().pattern(regexForImageUrl),
     email: Joi.string().required().email(),
     password: Joi.string().required(),
   }),
@@ -27,14 +27,14 @@ const updateProfileValidation = celebrate({
 });
 const updateAvatarValidation = celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().required().pattern(regex),
+    avatar: Joi.string().required().pattern(regexForImageUrl),
   }),
 });
 
 const createCardValidation = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30).required(),
-    link: Joi.string().required().pattern(regex),
+    link: Joi.string().required().pattern(regexForImageUrl),
   }),
 });
 

@@ -15,7 +15,7 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { allowedCors } = require('./middlewares/corsProtect');
 // const corsProtect = require('./middlewares/corsProtect');
 
-const { PORT = 3000 } = process.env;
+const { PORT = 3001 } = process.env;
 
 const app = express();
 
@@ -28,11 +28,12 @@ app.use(cors({
   origin: allowedCors,
 }));
 app.use(router);
+app.use((req, res, next) => {
+  next(new NotFoundError(notFound.message));
+});
 app.use(errorLogger);
 app.use(errors());
-app.use(() => {
-  throw new NotFoundError(notFound.message);
-});
+
 app.use(errorHandler);
 
 app.listen(PORT, () => {
